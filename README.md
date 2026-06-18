@@ -212,5 +212,6 @@ notebooks/     Exploration workspace
 - [API reference](docs/api/api-reference.md)
 - [Data dictionary](docs/data_dictionary/data-dictionary.md)
 - [Power BI integration](docs/power-bi-integration.md)
+- [Complete interview preparation guide](docs/interview-preparation-guide.md)
 
 Screenshot placeholders can be added under `docs/screenshots/` after deployment.
