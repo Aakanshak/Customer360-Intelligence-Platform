@@ -10,9 +10,14 @@ import plotly.graph_objects as go
 import requests
 import streamlit as st
 
-from frontend.cloud_service import DATA_DIR
-from frontend.cloud_service import get as local_get
-from frontend.cloud_service import post as local_post
+try:
+    from frontend.cloud_service import DATA_DIR
+    from frontend.cloud_service import get as local_get
+    from frontend.cloud_service import post as local_post
+except ModuleNotFoundError:
+    from cloud_service import DATA_DIR
+    from cloud_service import get as local_get
+    from cloud_service import post as local_post
 
 API_URL = os.getenv("API_URL", "http://localhost:8000").rstrip("/")
 USE_LOCAL_DATA = os.getenv("USE_LOCAL_DATA", "").lower() in {"1", "true", "yes"} or not os.getenv("API_URL")
