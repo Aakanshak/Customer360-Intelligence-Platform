@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import os
+from io import BytesIO
 
 import pandas as pd
 import plotly.express as px
@@ -196,6 +197,60 @@ def insight_card(label: str, value: str, copy: str) -> None:
         f'<div class="insight"><div class="insight-label">{label}</div><div class="insight-value">{value}</div><div class="insight-copy">{copy}</div></div>',
         unsafe_allow_html=True,
     )
+
+
+UPLOAD_SCHEMAS = {
+    "customers": ["customer_id", "name", "signup_date"],
+    "products": ["product_id", "product_name", "category", "unit_price", "unit_cost"],
+    "transactions": ["transaction_id", "customer_id", "order_amount", "order_date"],
+    "marketing": ["campaign_id", "customer_id", "touched_at"],
+    "support": ["ticket_id", "customer_id", "opened_at"],
+}
+
+
+def read_uploaded_file(uploaded_file) -> pd.DataFrame:
+    content = uploaded_file.getvalue()
+    if uploaded_file.name.lower().endswith(".csv"):
+        return pd.read_csv(BytesIO(content))
+    return pd.read_excel(BytesIO(content))
+
+
+def validate_and_standardize_upload(frame: pd.DataFrame, dataset_type: str) -> tuple[pd.DataFrame, dict]:
+    cleaned = frame.copy()
+    cleaned.columns = cleaned.columns.str.strip().str.lower().str.replace(r"\s+", "_", regex=True)
+    required = UPLOAD_SCHEMAS[dataset_type]
+    missing = sorted(set(required) - set(cleaned.columns))
+    if missing:
+        raise ValueError(f"Missing required columns: {', '.join(missing)}")
+
+    rows_before = len(cleaned)
+    cleaned = cleaned.drop_duplicates(subset=[required[0]], keep="last")
+    date_columns = {
+        "customers": ["signup_date", "created_at"],
+        "transactions": ["order_date"],
+        "marketing": ["touched_at"],
+        "support": ["opened_at", "closed_at"],
+    }.get(dataset_type, [])
+    for column in date_columns:
+        if column in cleaned:
+            cleaned[column] = pd.to_datetime(cleaned[column], errors="coerce")
+    for column in ("name", "city", "state", "product_name", "category"):
+        if column in cleaned:
+            cleaned[column] = cleaned[column].astype("string").str.strip().str.title()
+    for column in ("order_amount", "unit_price", "unit_cost", "campaign_cost", "resolution_time"):
+        if column in cleaned:
+            cleaned[column] = pd.to_numeric(cleaned[column], errors="coerce")
+
+    invalid_required = {column: int(cleaned[column].isna().sum()) for column in required if cleaned[column].isna().any()}
+    report = {
+        "rows_received": rows_before,
+        "rows_standardized": len(cleaned),
+        "duplicates_removed": rows_before - len(cleaned),
+        "columns": len(cleaned.columns),
+        "missing_values": int(cleaned.isna().sum().sum()),
+        "invalid_required_values": invalid_required,
+    }
+    return cleaned, report
 
 
 inject_theme()
@@ -407,25 +462,59 @@ else:
         st.markdown("#### Quick demo")
         st.caption("Create a deterministic synthetic dataset for development and testing.")
         if USE_LOCAL_DATA:
-            st.info("The cloud deployment uses the bundled UCI dataset in read-only mode.")
+            st.info("The public UCI dataset powers the default dashboard. Your uploads are processed privately for the current browser session.")
         elif st.button("Create demo dataset", width="stretch"):
             st.json(api_post("/api/v1/admin/seed", {"customer_count": 250, "seed": 42}))
     with right:
-        dataset_type = st.selectbox("Dataset type", ["customers", "products", "transactions", "marketing", "support"], disabled=USE_LOCAL_DATA)
-        uploaded = st.file_uploader("Drop CSV or Excel here", type=["csv", "xls", "xlsx"], disabled=USE_LOCAL_DATA)
-        if uploaded and not USE_LOCAL_DATA and st.button("Validate & ingest", type="primary"):
-            response = requests.post(
-                f"{API_URL}/api/v1/ingestion/files",
-                data={"dataset_type": dataset_type},
-                files={"file": (uploaded.name, uploaded.getvalue(), uploaded.type)},
-                timeout=240,
-            )
-            if response.ok:
-                api_get.clear()
-                st.success("Dataset validated and loaded.")
-                st.json(response.json())
+        dataset_type = st.selectbox("Dataset type", list(UPLOAD_SCHEMAS))
+        st.caption(f"Required columns: {', '.join(UPLOAD_SCHEMAS[dataset_type])}")
+        uploaded = st.file_uploader("Drop CSV or Excel here", type=["csv", "xls", "xlsx"])
+        if uploaded and st.button("Validate & process", type="primary"):
+            if USE_LOCAL_DATA:
+                try:
+                    raw_upload = read_uploaded_file(uploaded)
+                    cleaned_upload, quality_report = validate_and_standardize_upload(raw_upload, dataset_type)
+                    st.session_state["processed_upload"] = cleaned_upload
+                    st.session_state["upload_report"] = quality_report
+                    st.session_state["upload_name"] = uploaded.name
+                    st.success(f"{uploaded.name} was validated and standardized for this session.")
+                except Exception as exc:
+                    st.error(str(exc))
             else:
-                st.error(response.json().get("detail", response.text))
+                response = requests.post(
+                    f"{API_URL}/api/v1/ingestion/files",
+                    data={"dataset_type": dataset_type},
+                    files={"file": (uploaded.name, uploaded.getvalue(), uploaded.type)},
+                    timeout=240,
+                )
+                if response.ok:
+                    api_get.clear()
+                    st.success("Dataset validated and loaded into the database.")
+                    st.json(response.json())
+                else:
+                    st.error(response.json().get("detail", response.text))
+
+    if USE_LOCAL_DATA and "processed_upload" in st.session_state:
+        section("Upload quality report", st.session_state.get("upload_name", "Session dataset"))
+        report = st.session_state["upload_report"]
+        report_columns = st.columns(5)
+        report_columns[0].metric("Rows received", f"{report['rows_received']:,}")
+        report_columns[1].metric("Rows standardized", f"{report['rows_standardized']:,}")
+        report_columns[2].metric("Duplicates removed", f"{report['duplicates_removed']:,}")
+        report_columns[3].metric("Columns", f"{report['columns']:,}")
+        report_columns[4].metric("Missing values", f"{report['missing_values']:,}")
+        if report["invalid_required_values"]:
+            st.warning(f"Invalid required values: {report['invalid_required_values']}")
+        processed = st.session_state["processed_upload"]
+        st.dataframe(processed.head(250), width="stretch", hide_index=True)
+        st.download_button(
+            "Download standardized CSV",
+            processed.to_csv(index=False).encode("utf-8"),
+            file_name=f"standardized_{dataset_type}.csv",
+            mime="text/csv",
+            width="stretch",
+        )
+        st.caption("Cloud uploads are session-only and are automatically removed when the app session ends.")
 
     section("Public data provenance", "Portfolio-safe attribution")
     st.info(
