@@ -1,0 +1,4 @@
+customer_id,name,age,gender,city,state,signup_date,email,is_active
+1001,Aditi Sharma,31,Female,Mumbai,Maharashtra,2024-01-15,aditi@example.com,true
+1002,Rohan Patel,43,Male,Bengaluru,Karnataka,2023-07-09,rohan@example.com,true
+1003,Meera Iyer,28,Female,Chennai,Tamil Nadu,2025-02-11,meera@example.com,true

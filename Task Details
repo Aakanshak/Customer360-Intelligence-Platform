@@ -1,0 +1,424 @@
+Act as a Principal Data Architect, Senior Data Scientist, Senior Analytics Consultant at ZS Associates, and a Staff Software Engineer.
+
+Build a production-grade, portfolio-worthy project named:
+
+# Customer360 Intelligence Platform
+
+Objective:
+Create an end-to-end customer analytics platform that consolidates customer information from multiple business sources and generates actionable business insights through analytics, machine learning, forecasting, and interactive dashboards.
+
+The project must resemble a real enterprise analytics solution used by consulting firms such as ZS Associates, Deloitte, EY, KPMG, Accenture, Fractal Analytics, Tiger Analytics, and product companies.
+
+---
+
+## BUSINESS PROBLEM
+
+Organizations store customer information across multiple systems such as CRM, sales, support, marketing, and transactions.
+
+Business leaders need:
+
+* A unified customer view
+* Customer Lifetime Value analysis
+* Customer segmentation
+* Churn prediction
+* Revenue forecasting
+* Customer behavior analysis
+* Executive dashboards
+
+The platform should solve these problems.
+
+---
+
+## TECH STACK
+
+Backend:
+
+* Python
+* FastAPI
+* SQLAlchemy
+* PostgreSQL
+
+Analytics:
+
+* Pandas
+* NumPy
+* SciPy
+
+Machine Learning:
+
+* Scikit-learn
+* XGBoost
+
+Visualization:
+
+* Plotly
+* Power BI integration
+
+Frontend:
+
+* Streamlit
+
+Deployment:
+
+* Docker
+* GitHub Actions
+
+Version Control:
+
+* Git
+* GitHub
+
+---
+
+## PROJECT MODULES
+
+MODULE 1: DATA INGESTION
+
+Features:
+
+* Upload CSV files
+* Upload Excel files
+* Load SQL tables
+* Schema validation
+* Data profiling
+* Metadata generation
+
+Output:
+
+* Standardized customer dataset
+
+---
+
+MODULE 2: CUSTOMER 360 DATA MODEL
+
+Create unified customer profile using:
+
+Customer Table:
+
+* customer_id
+* name
+* age
+* gender
+* city
+* state
+
+Transaction Table:
+
+* transaction_id
+* customer_id
+* order_amount
+* order_date
+
+Marketing Table:
+
+* campaign_id
+* customer_id
+* campaign_response
+
+Support Table:
+
+* ticket_id
+* customer_id
+* resolution_time
+
+Create customer master table through joins and transformations.
+
+---
+
+MODULE 3: DATA CLEANING
+
+Perform:
+
+* Missing value handling
+* Duplicate removal
+* Outlier treatment
+* Data type correction
+* Standardization
+
+Generate cleaning report.
+
+---
+
+MODULE 4: EXPLORATORY DATA ANALYSIS
+
+Generate:
+
+* Customer demographics
+* Revenue analysis
+* Geographic analysis
+* Product analysis
+* Trend analysis
+* Cohort analysis
+
+Visualizations:
+
+* Histograms
+* Boxplots
+* Heatmaps
+* Correlation matrix
+* Time-series charts
+
+---
+
+MODULE 5: CUSTOMER SEGMENTATION
+
+Implement:
+
+RFM Analysis
+
+Recency
+Frequency
+Monetary
+
+Create:
+
+* Platinum Customers
+* Gold Customers
+* Silver Customers
+* At-Risk Customers
+
+Implement K-Means clustering.
+
+Visualize clusters.
+
+---
+
+MODULE 6: CUSTOMER LIFETIME VALUE
+
+Calculate:
+
+* Average order value
+* Purchase frequency
+* Retention rate
+* Predicted customer lifetime value
+
+Generate ranking dashboard.
+
+---
+
+MODULE 7: CHURN PREDICTION
+
+Target:
+Predict whether customer will leave.
+
+Algorithms:
+
+* Logistic Regression
+* Random Forest
+* XGBoost
+
+Evaluation Metrics:
+
+* Accuracy
+* Precision
+* Recall
+* F1 Score
+* ROC AUC
+
+Display feature importance.
+
+---
+
+MODULE 8: SALES FORECASTING
+
+Predict:
+
+* Monthly revenue
+* Quarterly revenue
+
+Models:
+
+* Prophet
+* XGBoost Time Series
+
+Metrics:
+
+* RMSE
+* MAE
+* MAPE
+
+Visualize future forecasts.
+
+---
+
+MODULE 9: BUSINESS KPI ENGINE
+
+Calculate:
+
+Customer KPIs:
+
+* CLV
+* Churn Rate
+* Retention Rate
+
+Sales KPIs:
+
+* Revenue
+* Profit
+* Growth %
+
+Marketing KPIs:
+
+* Conversion Rate
+* Campaign Effectiveness
+
+Executive KPIs:
+
+* Top Segments
+* Revenue Contribution
+* Customer Health Score
+
+---
+
+MODULE 10: RECOMMENDATION ENGINE
+
+Generate recommendations such as:
+
+* Customers likely to churn
+* High-value customers
+* Upsell opportunities
+* Cross-sell opportunities
+* Campaign targeting suggestions
+
+Generate business-focused recommendations.
+
+---
+
+MODULE 11: DASHBOARD
+
+Build executive dashboard containing:
+
+Page 1:
+Executive Summary
+
+Page 2:
+Customer Segmentation
+
+Page 3:
+Customer Lifetime Value
+
+Page 4:
+Churn Analytics
+
+Page 5:
+Revenue Forecasting
+
+Page 6:
+Geographical Analysis
+
+Page 7:
+Recommendations
+
+Use Plotly interactive charts.
+
+---
+
+MODULE 12: DATABASE DESIGN
+
+Design PostgreSQL schema.
+
+Generate:
+
+* ER Diagram
+* Relationships
+* Indexing strategy
+* Optimized SQL queries
+
+---
+
+MODULE 13: API DEVELOPMENT
+
+Create FastAPI endpoints:
+
+/upload-data
+/customer-profile
+/customer-segmentation
+/churn-prediction
+/forecast
+/recommendations
+/dashboard
+
+Include:
+
+* Validation
+* Error handling
+* Logging
+
+---
+
+MODULE 14: SOFTWARE ENGINEERING
+
+Apply:
+
+* OOP Principles
+* SOLID Principles
+* Design Patterns
+* Modular architecture
+* Type hints
+* Unit tests
+* Integration tests
+
+---
+
+MODULE 15: MLOPS
+
+Implement:
+
+* Docker
+* GitHub Actions
+* Automated testing
+* CI/CD pipeline
+* Model versioning
+* Logging and monitoring
+
+---
+
+FOLDER STRUCTURE
+
+Generate complete production-grade folder structure.
+
+Include:
+
+backend/
+frontend/
+database/
+analytics/
+ml/
+tests/
+docs/
+data/
+notebooks/
+
+---
+
+GITHUB REQUIREMENTS
+
+Create:
+
+* Professional README
+* Architecture diagram
+* Data flow diagram
+* Installation guide
+* API documentation
+* Screenshots placeholders
+* Resume-ready project description
+
+---
+
+DELIVERABLES
+
+Generate implementation step-by-step.
+
+For every module:
+
+1. Explain purpose
+2. Generate folder structure
+3. Generate code
+4. Generate SQL scripts
+5. Generate tests
+6. Generate documentation
+
+Follow enterprise-level coding standards and analytics practices used in consulting and analytics companies.
+
+Never generate toy code.
+Generate scalable production-ready code.
