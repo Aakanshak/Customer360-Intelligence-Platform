@@ -2,6 +2,12 @@
 
 A production-oriented customer analytics platform that unifies CRM, transaction, marketing, product, and support data into a governed Customer 360 layer. It delivers executive KPIs, segmentation, lifetime value, churn risk, revenue forecasts, cohort analysis, and explainable next-best actions through FastAPI and Streamlit.
 
+## Live application
+
+**Streamlit dashboard:** https://customer360-intelligence-platform.streamlit.app
+
+**GitHub repository:** https://github.com/Aakanshak/Customer360-Intelligence-Platform
+
 ## What it delivers
 
 - Validated CSV and Excel ingestion with profiling, type correction, duplicate handling, audit batches, and checksum-based idempotency
